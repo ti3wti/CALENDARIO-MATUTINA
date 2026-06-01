@@ -247,11 +247,35 @@
 
   /* ── RESPONSIVE ── */
   @media (max-width: 600px) {
-    .num-emision { font-size: 1.15rem; }
-    .celda { min-height: 72px; padding: 5px 3px 7px; }
-    .badge-club { font-size: .54rem; padding: 1px 3px; }
-    header h1 { font-size: 1.4rem; }
-    .cal-grid { gap: 3px; }
+    header { padding: 12px 10px 10px; gap: 8px; }
+    header h1 { font-size: 1.2rem; }
+    header .sub { font-size: .75rem; letter-spacing: 1px; }
+    .nav-mes button { padding: 4px 10px; font-size: .95rem; }
+    .nav-mes .mes-label { font-size: 1rem; min-width: 110px; }
+
+    .hoy-banner { font-size: .82rem; padding: 8px 8px; }
+    .hoy-banner span { font-size: 1.2rem; }
+
+    .leyenda { gap: 4px; padding: 6px 8px; }
+    .leyenda-item { font-size: .68rem; }
+
+    .cal-wrap { padding: 6px 4px; }
+    .cal-grid { gap: 2px; }
+
+    .cal-dia-hdr { font-size: .6rem; letter-spacing: 0; padding: 4px 0; }
+
+    .celda { min-height: 62px; padding: 3px 2px 4px; border-radius: 5px; }
+    .num-dia { font-size: .65rem; }
+    .num-emision { font-size: .95rem; margin-top: 2px; }
+    .celda.es-hoy .num-emision { font-size: 1.05rem; }
+
+    .badge-club { font-size: .48rem; padding: 1px 2px; border-radius: 2px; line-height: 1.2; }
+  }
+
+  @media (max-width: 380px) {
+    .num-emision { font-size: .82rem; }
+    .badge-club { font-size: .42rem; }
+    .cal-dia-hdr { font-size: .52rem; }
   }
 </style>
 </head>
