@@ -7,7 +7,7 @@
 
 ## 🔗 Ver en línea
 
-**[→ ti3wti.github.io/revista-matutina-calendario](https://ti3wti.github.io/revista-matutina-calendario)**
+**[→ ti3wti.github.io/CALENDARIO-MATUTINA](https://ti3wti.github.io/CALENDARIO-MATUTINA)**
 
 ---
 
