@@ -348,11 +348,26 @@ const CLUBS = [
 ];
 
 let ajuste = 0;
+let EVENTOS = {};
 let mesVista, anioVista;
 
-const EVENTOS = {
-  '2026-06-20': 'Asamblea TI0RHU',
-};
+// ── EVENTOS ESPECIALES (cargados de eventos.csv) ─────────────
+async function cargarEventos() {
+  try {
+    const r = await fetch('eventos.csv?_=' + Date.now());
+    if (!r.ok) return;
+    const texto = await r.text();
+    texto.split('\n').forEach(linea => {
+      linea = linea.trim();
+      if (!linea || linea.startsWith('#')) return;
+      const coma = linea.indexOf(',');
+      if (coma === -1) return;
+      const fecha = linea.slice(0, coma).trim();
+      const desc  = linea.slice(coma + 1).trim();
+      if (fecha && desc) EVENTOS[fecha] = desc;
+    });
+  } catch (_) {}
+}
 
 function diasDesdeBase(fecha) {
   const ms = Date.UTC(fecha.getFullYear(), fecha.getMonth(), fecha.getDate())
@@ -476,7 +491,7 @@ async function cargarConfig() {
 }
 
 (async () => {
-  await cargarConfig();
+  await Promise.all([cargarConfig(), cargarEventos()]);
   const hoy  = new Date();
   mesVista   = hoy.getMonth();
   anioVista  = hoy.getFullYear();
