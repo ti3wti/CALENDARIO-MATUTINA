@@ -229,6 +229,23 @@
   .club-ti0rhu  { background: #1a5276; }
   .club-ecos    { background: #a04000; }
 
+  /* Etiqueta evento especial */
+  .evento {
+    font-size: .58rem;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    letter-spacing: .3px;
+    color: #c0392b;
+    background: #fdecea;
+    border: 1px solid #e57373;
+    border-radius: 3px;
+    padding: 1px 4px;
+    margin-top: 3px;
+    text-align: center;
+    width: 100%;
+    line-height: 1.3;
+  }
+
   /* Indicador HOY en badge */
   .celda.es-hoy .badge-club {
     outline: 2px solid var(--hoy-color);
@@ -332,7 +349,13 @@ const CLUBS = [
 let ajuste = 0;      // viene de config.json
 let mesVista, anioVista;
 
-// ── UTILIDADES ───────────────────────────────────────────────
+// ── EVENTOS ESPECIALES ───────────────────────────────────────
+// Formato: 'YYYY-MM-DD': 'Texto del evento'
+const EVENTOS = {
+  '2026-06-20': 'Asamblea TI0RHU',
+};
+
+
 function diasDesdeBase(fecha) {
   const ms = Date.UTC(fecha.getFullYear(), fecha.getMonth(), fecha.getDate())
            - Date.UTC(BASE_FECHA.getFullYear(), BASE_FECHA.getMonth(), BASE_FECHA.getDate());
@@ -412,6 +435,15 @@ function renderCalendario() {
       badge.className = 'badge-club ' + club.clase;
       badge.innerHTML = club.nombre ? club.indicativo + '<br>' + club.nombre : club.indicativo;
       celda.appendChild(badge);
+    }
+
+    // Evento especial
+    const claveEvento = `${anioVista}-${String(mesVista+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    if (EVENTOS[claveEvento]) {
+      const ev = document.createElement('div');
+      ev.className = 'evento';
+      ev.textContent = EVENTOS[claveEvento];
+      celda.appendChild(ev);
     }
 
     grid.appendChild(celda);
