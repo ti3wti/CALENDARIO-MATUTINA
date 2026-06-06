@@ -168,7 +168,6 @@
     border-color: #f0d090;
   }
 
-  /* HOY */
   .celda.es-hoy {
     border: 2px solid var(--hoy-color);
     animation: pulso-hoy 2s ease-in-out infinite;
@@ -209,7 +208,6 @@
     font-weight: 700;
   }
 
-  /* Badge club */
   .badge-club {
     font-size: .62rem;
     font-family: 'Oswald', sans-serif;
@@ -229,7 +227,6 @@
   .club-ti0rhu  { background: #1a5276; }
   .club-ecos    { background: #a04000; }
 
-  /* Etiqueta evento especial */
   .evento {
     font-size: .58rem;
     font-family: 'Oswald', sans-serif;
@@ -246,7 +243,6 @@
     line-height: 1.3;
   }
 
-  /* Indicador HOY en badge */
   .celda.es-hoy .badge-club {
     outline: 2px solid var(--hoy-color);
     outline-offset: 1px;
@@ -262,6 +258,14 @@
     margin-top: 10px;
   }
 
+  /* ── EMBED MODE ── */
+  body.embed header,
+  body.embed footer,
+  body.embed .nav-mes { display: none !important; }
+  body.embed { background: #fff; }
+  body.embed .hoy-banner { font-size: 0.95rem; padding: 8px 12px; }
+  body.embed .cal-wrap { padding: 10px 8px; }
+
   /* ── RESPONSIVE ── */
   @media (max-width: 600px) {
     header { padding: 12px 10px 10px; gap: 8px; }
@@ -269,23 +273,17 @@
     header .sub { font-size: .75rem; letter-spacing: 1px; }
     .nav-mes button { padding: 4px 10px; font-size: .95rem; }
     .nav-mes .mes-label { font-size: 1rem; min-width: 110px; }
-
     .hoy-banner { font-size: .82rem; padding: 8px 8px; }
     .hoy-banner span { font-size: 1.2rem; }
-
     .leyenda { gap: 4px; padding: 6px 8px; }
     .leyenda-item { font-size: .68rem; }
-
     .cal-wrap { padding: 6px 4px; }
     .cal-grid { gap: 2px; }
-
     .cal-dia-hdr { font-size: .6rem; letter-spacing: 0; padding: 4px 0; }
-
     .celda { min-height: 62px; padding: 3px 2px 4px; border-radius: 5px; }
     .num-dia { font-size: .65rem; }
     .num-emision { font-size: .95rem; margin-top: 2px; }
     .celda.es-hoy .num-emision { font-size: 1.05rem; }
-
     .badge-club { font-size: .48rem; padding: 1px 2px; border-radius: 2px; line-height: 1.2; }
   }
 
@@ -329,9 +327,13 @@
 <footer id="pie">Calendario generado automáticamente · Revista Matutina</footer>
 
 <script>
+// ── EMBED MODE ───────────────────────────────────────────────
+const isEmbed = new URLSearchParams(window.location.search).has('embed');
+if (isEmbed) document.body.classList.add('embed');
+
 // ── CONFIG BASE ──────────────────────────────────────────────
 const BASE_EMISION = 7832;
-const BASE_FECHA   = new Date(2026, 4, 21); // 21 mayo 2026 (mes 0-indexed)
+const BASE_FECHA   = new Date(2026, 4, 21);
 
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
                'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -345,16 +347,12 @@ const CLUBS = [
   { indicativo:'Ecos del Norte', nombre:'',         clase:'club-ecos'   },
 ];
 
-// Estado
-let ajuste = 0;      // viene de config.json
+let ajuste = 0;
 let mesVista, anioVista;
 
-// ── EVENTOS ESPECIALES ───────────────────────────────────────
-// Formato: 'YYYY-MM-DD': 'Texto del evento'
 const EVENTOS = {
   '2026-06-20': 'Asamblea TI0RHU',
 };
-
 
 function diasDesdeBase(fecha) {
   const ms = Date.UTC(fecha.getFullYear(), fecha.getMonth(), fecha.getDate())
@@ -367,7 +365,6 @@ function emisionDe(fecha) {
 }
 
 function clubDomingo(fecha) {
-  // Semana del domingo en el mes (1ª, 2ª, 3ª, 4ª, 5ª)
   const semana = Math.ceil(fecha.getDate() / 7);
   return CLUBS[Math.min(semana - 1, 4)];
 }
@@ -378,13 +375,11 @@ function esMismoDia(a, b) {
          a.getDate()     === b.getDate();
 }
 
-// ── RENDER ───────────────────────────────────────────────────
 function renderCalendario() {
   const hoy    = new Date();
   const grid   = document.getElementById('calGrid');
   grid.innerHTML = '';
 
-  // Cabeceras
   DIAS_HDR.forEach((d, i) => {
     const hdr = document.createElement('div');
     hdr.className = 'cal-dia-hdr' + (i === 6 ? ' domingo' : '');
@@ -392,19 +387,16 @@ function renderCalendario() {
     grid.appendChild(hdr);
   });
 
-  // Primer día del mes (ajustado a semana lun=0)
   const primero  = new Date(anioVista, mesVista, 1);
-  const offset   = (primero.getDay() + 6) % 7; // lun=0 … dom=6
+  const offset   = (primero.getDay() + 6) % 7;
   const diasMes  = new Date(anioVista, mesVista + 1, 0).getDate();
 
-  // Celdas vacías iniciales
   for (let v = 0; v < offset; v++) {
     const vacia = document.createElement('div');
     vacia.className = 'celda vacia';
     grid.appendChild(vacia);
   }
 
-  // Días del mes
   for (let d = 1; d <= diasMes; d++) {
     const fecha   = new Date(anioVista, mesVista, d);
     const esDom   = fecha.getDay() === 0;
@@ -416,19 +408,16 @@ function renderCalendario() {
       + (esDom   ? ' es-domingo' : '')
       + (esHoy   ? ' es-hoy'     : '');
 
-    // Número de día
     const ndCont = document.createElement('div');
     ndCont.className = 'num-dia';
     ndCont.textContent = d;
     celda.appendChild(ndCont);
 
-    // Número de emisión
     const ne = document.createElement('div');
     ne.className = 'num-emision';
     ne.textContent = emision;
     celda.appendChild(ne);
 
-    // Badge club (solo domingos)
     if (esDom) {
       const club = clubDomingo(fecha);
       const badge = document.createElement('div');
@@ -437,7 +426,6 @@ function renderCalendario() {
       celda.appendChild(badge);
     }
 
-    // Evento especial
     const claveEvento = `${anioVista}-${String(mesVista+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     if (EVENTOS[claveEvento]) {
       const ev = document.createElement('div');
@@ -449,11 +437,11 @@ function renderCalendario() {
     grid.appendChild(celda);
   }
 
-  // Label mes
-  document.getElementById('mesLabel').textContent =
-    MESES[mesVista] + ' ' + anioVista;
+  // En embed, el nav-mes está oculto pero el mesLabel sirve como título dentro del banner
+  if (!isEmbed) {
+    document.getElementById('mesLabel').textContent = MESES[mesVista] + ' ' + anioVista;
+  }
 
-  // Banner de hoy
   actualizarBanner(hoy);
 }
 
@@ -465,8 +453,9 @@ function actualizarBanner(hoy) {
     const c = clubDomingo(hoy);
     club = ` · <strong>${c.indicativo}</strong> – ${c.nombre}`;
   }
+  const mesAnio = isEmbed ? ` · ${MESES[mesVista]} ${anioVista}` : '';
   document.getElementById('hoyBanner').innerHTML =
-    `Hoy ${hoy.getDate()} de ${MESES[hoy.getMonth()]} ${hoy.getFullYear()} · Emisión <span>${emHoy}</span>${club}`;
+    `Hoy ${hoy.getDate()} de ${MESES[hoy.getMonth()]} ${hoy.getFullYear()} · Emisión <span>${emHoy}</span>${club}${mesAnio}`;
 }
 
 function cambiarMes(delta) {
@@ -476,7 +465,6 @@ function cambiarMes(delta) {
   renderCalendario();
 }
 
-// ── CARGA CONFIG.JSON ────────────────────────────────────────
 async function cargarConfig() {
   try {
     const r = await fetch('config.json?_=' + Date.now());
@@ -484,10 +472,9 @@ async function cargarConfig() {
       const cfg = await r.json();
       if (typeof cfg.ajuste === 'number') ajuste = cfg.ajuste;
     }
-  } catch (_) { /* sin config.json → ajuste=0 */ }
+  } catch (_) {}
 }
 
-// ── INIT ─────────────────────────────────────────────────────
 (async () => {
   await cargarConfig();
   const hoy  = new Date();
